@@ -61,14 +61,29 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).json({ message: err.message || 'Server error' });
 });
 
-async function start() {
-  await connectDB();
-  initSocket(server, env.clientUrl);
-  server.listen(env.port, () => {
-    console.log(`Server running on http://localhost:${env.port}`);
-  });
+// async function start() {
+//   await connectDB();
+//   initSocket(server, env.clientUrl);
+//   server.listen(env.port, () => {
+//     console.log(`Server running on http://localhost:${env.port}`);
+//   });
+// }
+
+// start();
+
+
+export async function startServer() {
+  if (process.env.NODE_ENV !== "test") {
+    await connectDB();
+    initSocket(server, env.clientUrl);
+  }
+  return server.listen(env.port);
 }
 
-start();
+// Start normally only if NOT in test mode
 
+if (process.env.NODE_ENV !== "test") {
+  startServer();
+}
 
+export default app;
