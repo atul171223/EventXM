@@ -1,0 +1,89 @@
+# =============================
+# Node Modules
+# =============================
+node_modules/
+
+# =============================
+# Environment Files
+# =============================
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# =============================
+# Build & Dist (Frontend + Backend)
+# =============================
+dist/
+dist-ssr/
+build/
+.cache/
+.temp/
+tmp/
+*.cache
+*.tmp
+
+# =============================
+# Logs
+# =============================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# =============================
+# OS / System Files
+# =============================
+.DS_Store
+Thumbs.db
+
+# =============================
+# Uploads
+# (Comment this if you want to track uploaded files)
+# =============================
+uploads/
+
+# =============================
+# IDE / Editor Settings
+# =============================
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.swp
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# =============================
+# Redis dump files
+# =============================
+dump.rdb
+appendonly.aof
+
+# =============================
+# Jest / Coverage
+# =============================
+coverage/
+*.lcov
+
+# =============================
+# Test Artifacts
+# =============================
+.jest/
+
+# =============================
+# Lock files
+# =============================
+*.lock
+
+# =============================
+# PPTs / Keynote / Pages files
+# =============================
+event_new.key
+event_new.pages
