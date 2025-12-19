@@ -1,10 +1,12 @@
+console.log("user raw:", localStorage.getItem("user"));
+console.log("token raw:", localStorage.getItem("token"));
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './tailwind.css'
 import api from './api/axios';
 
-api.defaults.baseURL = '' // same origin proxy
+// api.defaults.baseURL = '' // same origin proxy
 
 // Ensure theme is applied immediately on app bootstrap
 function applyThemeFromStorage() {

@@ -1,3 +1,9 @@
+if (localStorage.getItem("user") === "undefined") {
+  localStorage.removeItem("user");
+}
+if (localStorage.getItem("token") === "undefined") {
+  localStorage.removeItem("token");
+}
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import api from '../api/axios';
 
@@ -5,9 +11,17 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem('token'));
+  // const [user, setUser] = useState(() => {
+  //   const u = localStorage.getItem('user');
+  //   return u ? JSON.parse(u) : null;
+  // });
   const [user, setUser] = useState(() => {
-    const u = localStorage.getItem('user');
-    return u ? JSON.parse(u) : null;
+    try {
+      const stored = localStorage.getItem("user");
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
   });
 
   useEffect(() => {
