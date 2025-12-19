@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
+import api from '../api/axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 
@@ -16,7 +16,7 @@ export default function Signup() {
     e.preventDefault();
     setError('');
     try {
-      const res = await axios.post('/api/auth/signup', { name, email, password, role });
+      const res = await api.post('/api/auth/signup', { name, email, password, role });
       login(res.data);
       nav('/');
     } catch (err) {

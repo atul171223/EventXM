@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import axios from 'axios';
+import api from '../api/axios';
 import { useAuth } from '../context/AuthContext.jsx';
 import EventTicket from '../components/EventTicket.jsx';
 import html2canvas from 'html2canvas';
@@ -149,29 +149,29 @@ export default function Dashboard() {
   }, [user]);
 
   async function loadMyRegs() {
-    const res = await axios.get('/api/registrations/me');
+    const res = await api.get('/api/registrations/me');
     setMine(res.data.registrations || []);
   }
 
   async function loadMyEvents() {
-    const res = await axios.get('/api/events', { params: { organizer: user.id } });
+    const res = await api.get('/api/events', { params: { organizer: user.id } });
     setMine(res.data.events || []);
   }
 
   async function loadPending() {
-    const res = await axios.get('/api/events', { params: { status: 'pending' } });
+    const res = await api.get('/api/events', { params: { status: 'pending' } });
     setPending(res.data.events || []);
   }
 
   async function loadParticipants(eventId) {
-    const res = await axios.get(`/api/registrations/${eventId}/participants`);
+    const res = await api.get(`/api/registrations/${eventId}/participants`);
     setParticipants(res.data.participants || []);
   }
 
   async function exportCsv(eventId) {
     // Check if participants exist first
     try {
-      const check = await axios.get(`/api/registrations/${eventId}/participants`);
+      const check = await api.get(`/api/registrations/${eventId}/participants`);
       const list = check.data.participants || [];
       if (!Array.isArray(list) || list.length === 0) {
         showToast('error', 'No participants available for this event.');
@@ -183,7 +183,7 @@ export default function Dashboard() {
       return;
     }
 
-    const res = await axios.get(`/api/registrations/${eventId}/participants.csv`, { responseType: 'blob' });
+    const res = await api.get(`/api/registrations/${eventId}/participants.csv`, { responseType: 'blob' });
     const url = window.URL.createObjectURL(new Blob([res.data]));
     const a = document.createElement('a');
     a.href = url; a.download = `participants-${eventId}.csv`; a.click();
@@ -199,13 +199,13 @@ export default function Dashboard() {
     fd.append('category', category);
     fd.append('description', description);
     if (poster) fd.append('poster', poster);
-    await axios.post('/api/events', fd);
+    await api.post('/api/events', fd);
     setTitle(''); setDate(''); setLocation(''); setDescription(''); setPoster(null);
     await loadMyEvents();
   }
 
-  async function approve(id) { await axios.post(`/api/admin/events/${id}/approve`); await loadPending(); }
-  async function reject(id) { await axios.post(`/api/admin/events/${id}/reject`); await loadPending(); }
+  async function approve(id) { await api.post(`/api/admin/events/${id}/approve`); await loadPending(); }
+  async function reject(id) { await api.post(`/api/admin/events/${id}/reject`); await loadPending(); }
 
   const analytics = useMemo(() => {
     // Simple mini-analytics: count by status and category

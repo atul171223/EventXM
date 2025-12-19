@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api/axios';
 import { useAuth } from '../context/AuthContext.jsx';
 
 export default function EventDetails() {
@@ -24,8 +24,8 @@ export default function EventDetails() {
 
   async function load() {
     const [e, r] = await Promise.all([
-      axios.get(`/api/events/${id}`),
-      axios.get(`/api/reviews/${id}`),
+      api.get(`/api/events/${id}`),
+      api.get(`/api/reviews/${id}`),
     ]);
     setEvent(e.data.event);
     setReviews(r.data.reviews || []);
@@ -38,7 +38,7 @@ export default function EventDetails() {
   }
 
   async function register() {
-    await axios.post(`/api/registrations/${id}/register`);
+    await api.post(`/api/registrations/${id}/register`);
     showToast('success', 'Registered! Check your email for confirmation.');
   }
 
@@ -63,9 +63,9 @@ export default function EventDetails() {
   async function submitReview() {
     try {
       console.log('Submitting review:', { rating, comment, eventId: id, user: user?.id });
-      console.log('Auth token:', axios.defaults.headers.common.Authorization);
+      console.log('Auth token:', api.defaults.headers.common.Authorization);
       
-      const response = await axios.post(`/api/reviews/${id}`, { rating, comment });
+      const response = await api.post(`/api/reviews/${id}`, { rating, comment });
       console.log('Review submitted successfully:', response.data);
       showToast('success', 'Review posted successfully!');
       setComment('');

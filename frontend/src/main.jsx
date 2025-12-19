@@ -2,9 +2,9 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './tailwind.css'
-import axios from 'axios'
+import api from './api/axios';
 
-axios.defaults.baseURL = '' // same origin proxy
+api.defaults.baseURL = '' // same origin proxy
 
 // Ensure theme is applied immediately on app bootstrap
 function applyThemeFromStorage() {

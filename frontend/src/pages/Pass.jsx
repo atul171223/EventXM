@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../api/axios';
 
 export default function Pass() {
   const [regs, setRegs] = useState([]);
-  useEffect(() => { (async () => { const r = await axios.get('/api/registrations/me'); setRegs(r.data.registrations||[]); })(); }, []);
+  useEffect(() => { (async () => { const r = await api.get('/api/registrations/me'); setRegs(r.data.registrations||[]); })(); }, []);
   return (
     <div className="space-y-3">
       <h1 className="text-xl font-bold">My Passes (offline-ready)</h1>

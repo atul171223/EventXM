@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api/axios';
 import useSocket from '../hooks/useSocket.js';
 import { useAuth } from '../context/AuthContext.jsx';
 
@@ -35,7 +35,7 @@ export default function Home() {
       const params = {};
       if (effQ) params.q = effQ;
       if (effCategory) params.category = effCategory;
-      const res = await axios.get('/api/events', { params });
+      const res = await api.get('/api/events', { params });
       setEvents(res.data.events || []);
     } catch (e) {
       setError('Failed to load events. Please ensure the backend is running.');
@@ -46,14 +46,14 @@ export default function Home() {
 
   async function fetchRecs() {
     try {
-      const res = await axios.get('/api/stats/recommendations');
+      const res = await api.get('/api/stats/recommendations');
       setRecs(res.data.events || []);
     } catch (_) {}
   }
 
   async function fetchDashboard() {
     try {
-      const r = await axios.get('/api/stats/dashboard');
+      const r = await api.get('/api/stats/dashboard');
       setDash({
         categories: r.data?.categories || [],
         upcomingByMonth: r.data?.upcomingByMonth || [],
@@ -192,7 +192,7 @@ export default function Home() {
 
 function Leaderboard() {
   const [rows, setRows] = useState([]);
-  useEffect(() => { (async () => { const r = await axios.get('/api/stats/leaderboard'); setRows(r.data.leaderboard || []); })(); }, []);
+  useEffect(() => { (async () => { const r = await api.get('/api/stats/leaderboard'); setRows(r.data.leaderboard || []); })(); }, []);
   return (
     <ul className="space-y-2">
       {rows.map((r, idx) => (
