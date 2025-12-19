@@ -13,7 +13,10 @@ export const env = {
   smtpPort: Number(process.env.SMTP_PORT || 587),
   smtpUser: process.env.SMTP_USER || '',
   smtpPass: process.env.SMTP_PASS || '',
-  emailFrom: process.env.EMAIL_FROM || 'no-reply@ems.local'
+  emailFrom: process.env.EMAIL_FROM || 'no-reply@ems.local',
+  cloudinaryName: process.env.CLOUDINARY_CLOUD_NAME,
+  cloudinaryKey: process.env.CLOUDINARY_API_KEY,
+  cloudinarySecret: process.env.CLOUDINARY_API_SECRET
 };
 
 export default env;

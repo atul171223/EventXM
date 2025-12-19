@@ -7,7 +7,8 @@ import redis from '../utils/redis.js';
 // -----------------------------------------
 export const createEvent = async (req, res) => {
   try {
-    const posterUrl = req.file ? `/uploads/${req.file.filename}` : undefined;
+    const posterUrl = req.file ? req.file.path : undefined;
+
     const event = await Event.create({
       ...req.body,
       organizer: req.user.id,
@@ -28,8 +29,9 @@ export const createEvent = async (req, res) => {
 // -----------------------------------------
 export const updateEvent = async (req, res) => {
   try {
-    const posterUrl = req.file ? `/uploads/${req.file.filename}` : undefined;
+    const posterUrl = req.file ? req.file.path : undefined;
     const update = { ...req.body };
+
     if (posterUrl) update.posterUrl = posterUrl;
 
     const event = await Event.findOneAndUpdate(
@@ -79,10 +81,9 @@ export const listEvents = async (req, res) => {
   try {
     const cacheKey = "events:list";
 
-    // Try to get from cache
     const cached = await redis.get(cacheKey);
     if (cached) {
-      return res.json(JSON.parse(cached)); // return cached result
+      return res.json(JSON.parse(cached));
     }
 
     const { q, category, status, organizer } = req.query;
@@ -99,7 +100,6 @@ export const listEvents = async (req, res) => {
 
     const data = { events };
 
-    // Save in cache for 60 seconds
     await redis.set(cacheKey, JSON.stringify(data), { EX: 60 });
 
     res.json(data);
@@ -132,7 +132,6 @@ export const getEvent = async (req, res) => {
 
     const data = { event, registrations: count };
 
-    // Save to Redis
     await redis.set(cacheKey, JSON.stringify(data), { EX: 60 });
 
     res.json(data);

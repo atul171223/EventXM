@@ -38,7 +38,7 @@ app.use(compression());
 app.use('/api', rateLimit({ windowMs: 60 * 1000, max: 120 }));
 
 // Static posters
-app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+// app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // API Routes (mounted later when implemented)
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
