@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext.jsx';
 import EventTicket from '../components/EventTicket.jsx';
@@ -28,7 +29,6 @@ export default function Dashboard() {
 
   const downloadTicketDirect = async (registration) => {
     try {
-      // Create a temporary div to render the ticket
       const tempDiv = document.createElement('div');
       tempDiv.style.position = 'absolute';
       tempDiv.style.left = '-9999px';
@@ -37,62 +37,43 @@ export default function Dashboard() {
       tempDiv.style.padding = '20px';
       document.body.appendChild(tempDiv);
 
-      // Render the ticket HTML directly
       const event = registration.event;
       const eventDate = new Date(event?.date);
-      const registrationDate = new Date(registration.createdAt);
 
       tempDiv.innerHTML = `
         <div style="width: 980px; padding: 20px;">
           <div style="display: flex; min-height: 360px; border-radius: 24px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
-            <!-- Left main area -->
             <div style="flex: 1; padding: 32px; color: white; background: linear-gradient(135deg, #3730a3, #7c3aed, #3730a3);">
-              <!-- Top brand row -->
               <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
                 <div>
                   <div style="font-size: 14px; letter-spacing: 0.1em; color: #f0abfc;">EVENT MANAGER</div>
                   <div style="font-size: 12px; color: #c7d2fe;">Official Event Ticket</div>
                 </div>
               </div>
-              
-              <!-- Event title -->
               <div style="margin-bottom: 24px;">
                 <div style="font-size: 36px; font-weight: 800; letter-spacing: 0.025em;">${event?.title}</div>
                 <div style="color: #67e8f9; font-weight: 600; margin-top: 4px;">${event?.category} EVENT</div>
               </div>
-              
-              <!-- Big date/time row -->
               <div style="display: flex; align-items: end; gap: 32px; margin-bottom: 24px;">
                 <div style="font-size: 30px; font-weight: 800; letter-spacing: 0.025em;">${eventDate.toLocaleDateString('en-GB')}</div>
                 <div style="font-size: 30px; font-weight: 800; letter-spacing: 0.025em;">${eventDate.toLocaleTimeString('en-GB', {hour: '2-digit', minute:'2-digit'})}</div>
               </div>
               <div style="text-transform: uppercase; letter-spacing: 0.1em; color: #67e8f9; margin-bottom: 24px;">${event?.location}</div>
-              
-              <!-- Barcode -->
               <div style="display: flex; align-items: center;">
                 <div style="height: 64px; width: 224px; background: repeating-linear-gradient(90deg, #fff 0, #fff 2px, transparent 2px, transparent 4px); border-radius: 4px;"></div>
               </div>
             </div>
-            
-            <!-- Perforation divider -->
             <div style="width: 2px; background: rgba(255,255,255,0.4); position: relative;">
               <div style="position: absolute; top: 24px; bottom: 24px; left: 0; right: 0; border-left: 2px dashed rgba(255,255,255,0.7);"></div>
             </div>
-            
-            <!-- Right stub -->
             <div style="width: 256px; padding: 24px; color: white; background: linear-gradient(to bottom, #312e81, #1e40af); display: flex; flex-direction: column;">
-              <!-- Vertical date/time -->
               <div style="color: #67e8f9; font-size: 16px; font-weight: 700; margin-bottom: 20px; writing-mode: vertical-rl; text-orientation: mixed; letter-spacing: 2px; text-shadow: 0 0 10px rgba(103, 232, 249, 0.5);">
                 ${eventDate.getDate().toString().padStart(2, '0')} ${(eventDate.getMonth() + 1).toString().padStart(2, '0')} ${eventDate.getFullYear()} • ${eventDate.getHours().toString().padStart(2, '0')} ${eventDate.getMinutes().toString().padStart(2, '0')}
               </div>
-              
-              <!-- QR -->
               <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 12px; margin-bottom: 16px; text-align: center;">
                 <div style="color: #c7d2fe; font-size: 14px; margin-bottom: 8px;">ENTRY QR</div>
                 ${registration.qrCodeDataUrl ? `<img src="${registration.qrCodeDataUrl}" alt="QR" style="margin: 0 auto; width: 144px; height: 144px; border-radius: 6px; background: white; padding: 4px;" />` : ''}
               </div>
-              
-              <!-- Footer small -->
               <div style="margin-top: auto; text-align: center; font-size: 10px; color: rgba(199, 210, 254, 0.8);">
                 <div style="font-weight: 600;">EventXM</div>
                 <div>© 2025 All rights reserved</div>
@@ -103,10 +84,8 @@ export default function Dashboard() {
         </div>
       `;
 
-      // Wait for images to load
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // Generate PDF
       const canvas = await html2canvas(tempDiv, {
         scale: 2,
         useCORS: true,
@@ -134,7 +113,6 @@ export default function Dashboard() {
       const fileName = `${event?.title?.replace(/[^a-zA-Z0-9]/g, '_')}_ticket.pdf`;
       pdf.save(fileName);
       
-      // Clean up
       document.body.removeChild(tempDiv);
     } catch (error) {
       console.error('Error generating PDF:', error);
@@ -169,7 +147,6 @@ export default function Dashboard() {
   }
 
   async function exportCsv(eventId) {
-    // Check if participants exist first
     try {
       const check = await api.get(`/api/registrations/${eventId}/participants`);
       const list = check.data.participants || [];
@@ -178,7 +155,6 @@ export default function Dashboard() {
         return;
       }
     } catch (e) {
-      // If the check fails, show error and abort
       showToast('error', 'Unable to fetch participants. Please try again.');
       return;
     }
@@ -208,7 +184,6 @@ export default function Dashboard() {
   async function reject(id) { await api.post(`/api/admin/events/${id}/reject`); await loadPending(); }
 
   const analytics = useMemo(() => {
-    // Simple mini-analytics: count by status and category
     const byStatus = mine.reduce((acc,e)=>{ acc[e.status]=(acc[e.status]||0)+1; return acc; },{});
     const byCategory = mine.reduce((acc,e)=>{ acc[e.category]=(acc[e.category]||0)+1; return acc; },{});
     return { byStatus, byCategory };
@@ -332,14 +307,36 @@ export default function Dashboard() {
               <h2 className="font-semibold mb-2">My Events</h2>
               <ul className="space-y-2">
                 {mine.map((e) => (
-                  <li key={e._id} className="p-3 border rounded-xl grid grid-cols-12 gap-3 items-center">
-                    <div className="col-span-9">
-                      <div className="font-medium">{e.title}</div>
-                      <div className="text-sm text-slate-500">Status: {e.status}</div>
-                    </div>
-                    <div className="col-span-3 justify-self-end grid grid-cols-1 gap-2 justify-items-end">
-                      <button className="btn-outline w-24 px-3 py-1 text-xs" onClick={()=>{setSelectedEvent(e._id);loadParticipants(e._id);}}>Participants</button>
-                      <button className="btn w-24 px-3 py-1 text-xs" onClick={()=>exportCsv(e._id)}>Export CSV</button>
+                  <li key={e._id} className="p-3 border rounded-xl">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium">{e.title}</div>
+                        <div className="text-sm text-slate-500">Status: {e.status}</div>
+                        <div className="text-xs text-slate-400 mt-1">
+                          {new Date(e.date).toLocaleDateString()} • {e.location}
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-2 shrink-0">
+                        {/* NEW: View Details Button */}
+                        <Link 
+                          to={`/events/${e._id}/organizer-details`}
+                          className="btn-outline px-3 py-1 text-xs whitespace-nowrap text-center"
+                        >
+                          📊 View Details
+                        </Link>
+                        <button 
+                          className="btn-outline px-3 py-1 text-xs whitespace-nowrap" 
+                          onClick={()=>{setSelectedEvent(e._id);loadParticipants(e._id);}}
+                        >
+                          👥 Participants
+                        </button>
+                        <button 
+                          className="btn px-3 py-1 text-xs whitespace-nowrap" 
+                          onClick={()=>exportCsv(e._id)}
+                        >
+                          📥 Export CSV
+                        </button>
+                      </div>
                     </div>
                   </li>
                 ))}
@@ -415,7 +412,6 @@ export default function Dashboard() {
                 user={user}
                 onReady={(fn) => setDownloadAction(() => fn)}
                 onDownload={() => {
-                  // Optional: Show success message or close modal
                   console.log('Ticket downloaded successfully');
                 }}
               />

@@ -1,9 +1,10 @@
+import fs from 'fs';
+import path from 'path';
 import Registration from '../models/Registration.js';
 import Event from '../models/Event.js';
 import { generateQRCodeDataUrl } from '../utils/qrcode.js';
 import { sendEmail } from '../utils/email.js';
 import { createObjectCsvWriter } from 'csv-writer';
-import path from 'path';
 
 export const registerForEvent = async (req, res) => {
   try {
@@ -68,7 +69,9 @@ export const exportParticipantsCsv = async (req, res) => {
       ],
     });
     await csvWriter.writeRecords(rows);
-    res.download(filePath);
+    res.download(filePath, (err) => {
+      fs.unlink(filePath, () => {});
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

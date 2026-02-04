@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext.jsx';
 
@@ -12,6 +12,7 @@ export default function EventDetails() {
   const [rating, setRating] = useState(5);
   const [hasReviewed, setHasReviewed] = useState(false);
   const [toast, setToast] = useState({ open: false, type: 'info', message: '' });
+  const [loadError, setLoadError] = useState('');
 
   const showToast = (type, message) => {
     setToast({ open: true, type, message });
@@ -23,17 +24,24 @@ export default function EventDetails() {
   }, [id, user]);
 
   async function load() {
-    const [e, r] = await Promise.all([
-      api.get(`/api/events/${id}`),
-      api.get(`/api/reviews/${id}`),
-    ]);
-    setEvent(e.data.event);
-    setReviews(r.data.reviews || []);
-    
-    // Check if current user has already reviewed this event
-    if (user) {
-      const userReview = r.data.reviews?.find(review => review.user?._id === user.id);
-      setHasReviewed(!!userReview);
+    setLoadError('');
+    try {
+      const [e, r] = await Promise.all([
+        api.get(`/api/events/${id}`),
+        api.get(`/api/reviews/${id}`),
+      ]);
+      setEvent(e.data.event);
+      setReviews(r.data.reviews || []);
+      if (user) {
+        const userReview = r.data.reviews?.find(review => review.user?._id === user.id);
+        setHasReviewed(!!userReview);
+      }
+    } catch (err) {
+      const msg = err.response?.status === 404
+        ? 'Event not found'
+        : err.response?.data?.message || 'Failed to load event. Please try again.';
+      setLoadError(msg);
+      setEvent(null);
     }
   }
 
@@ -85,6 +93,14 @@ export default function EventDetails() {
     }
   }
 
+  if (loadError) {
+    return (
+      <div className="rounded-xl p-4 bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300">
+        <p className="font-medium">{loadError}</p>
+        <Link to="/" className="text-sm underline mt-2 inline-block">← Back to Home</Link>
+      </div>
+    );
+  }
   if (!event) return <div>Loading...</div>;
 
   return (

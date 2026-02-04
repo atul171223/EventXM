@@ -34,11 +34,10 @@ export const updateEvent = async (req, res) => {
 
     if (posterUrl) update.posterUrl = posterUrl;
 
-    const event = await Event.findOneAndUpdate(
-      { _id: req.params.id, organizer: req.user.id },
-      update,
-      { new: true }
-    );
+    const filter = { _id: req.params.id };
+    if (req.user.role !== 'admin') filter.organizer = req.user.id;
+
+    const event = await Event.findOneAndUpdate(filter, update, { new: true });
 
     if (!event) return res.status(404).json({ message: 'Event not found' });
 
@@ -57,10 +56,10 @@ export const updateEvent = async (req, res) => {
 // -----------------------------------------
 export const deleteEvent = async (req, res) => {
   try {
-    const event = await Event.findOneAndDelete({
-      _id: req.params.id,
-      organizer: req.user.id
-    });
+    const filter = { _id: req.params.id };
+    if (req.user.role !== 'admin') filter.organizer = req.user.id;
+
+    const event = await Event.findOneAndDelete(filter);
 
     if (!event) return res.status(404).json({ message: 'Event not found' });
 

@@ -78,12 +78,22 @@ coverage/
 .jest/
 
 # =============================
-# Lock files
+# Lock files (keep package-lock.json for reproducible builds)
 # =============================
 *.lock
+!package-lock.json
+
+# Generated CSV exports
+participants-*.csv
 
 # =============================
 # PPTs / Keynote / Pages files
 # =============================
 event_new.key
 event_new.pages
+
+# Playwright UI integration tests (frontend only)
+frontend/tests/
+frontend/playwright.config.js
+frontend/playwright-report/
+frontend/test-results/

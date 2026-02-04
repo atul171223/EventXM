@@ -4,6 +4,7 @@ import EventDetails from './pages/EventDetails.jsx';
 import Login from './pages/Login.jsx';
 import Signup from './pages/Signup.jsx';
 import Dashboard from './pages/Dashboard.jsx';
+import EventOrganizerDetails from './pages/Eventorganizerdetails.jsx';
 import Pass from './pages/Pass.jsx';
 import { AuthProvider, useAuth } from './context/AuthContext.jsx';
 import { useEffect, useState } from 'react';
@@ -103,6 +104,14 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/events/:id" element={<EventDetails />} />
+            <Route
+              path="/events/:id/organizer-details"
+              element={
+                <PrivateRoute roles={["organizer", "admin"]}>
+                  <EventOrganizerDetails />
+                </PrivateRoute>
+              }
+            />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/pass" element={<PrivateRoute roles={["customer","organizer","admin"]}><Pass /></PrivateRoute>} />
