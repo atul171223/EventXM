@@ -17,7 +17,6 @@
 - [Database Schema](#-database-schema)
 - [Deployment](#-deployment)
 - [Contributing](#-contributing)
-- [License](#-license)
 
 ---
 
@@ -531,39 +530,3 @@ Contributions are welcome! Please follow these steps:
 5. Open a Pull Request
 
 ---
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 👨‍💻 Author
-
-**Your Name**
-- GitHub: [@yourusername](https://github.com/yourusername)
-- LinkedIn: [Your Profile](https://linkedin.com/in/yourprofile)
-- Email: your.email@example.com
-
----
-
-## 🙏 Acknowledgments
-
-- MongoDB for flexible database
-- Cloudinary for image hosting
-- Render for easy deployment
-- Socket.IO for real-time features
-- The MERN stack community
-
----
-
-## 📞 Support
-
-If you have any questions or need help:
-- Open an issue on GitHub
-- Email: support@eventxm.com
-- Discord: [Join our server](https://discord.gg/yourinvite)
-
----
-
-Made with ❤️ for campus event management
